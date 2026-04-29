@@ -1,6 +1,5 @@
-streamlit==1.32.0
-anthropic==0.21.0
-ccxt==4.2.95
-yfinance==0.2.37
-pandas==2.2.1
-numpy==1.26.4
+ccxt==4.2.25
+pandas==2.1.4
+numpy==1.26.3
+colorama==0.4.6
+python-dotenv==1.0.0

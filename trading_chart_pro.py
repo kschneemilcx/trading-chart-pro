@@ -262,7 +262,8 @@ Fib H:{ind.get('fib_high',0)} L:{ind.get('fib_low',0)} Niveles:{ind.get('fib_lev
             msgs_ctx.append({"role":"user","content":context+"\n\nMensaje: "+m["content"]})
         else:
             msgs_ctx.append({"role":m["role"],"content":m["content"]})
-    client=anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    import httpx
+    client=anthropic.Anthropic(api_key=ANTHROPIC_KEY, http_client=httpx.Client())
     resp=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=2000,system=SYSTEM_PROMPT,messages=msgs_ctx)
     raw=resp.content[0].text.strip()
     try:
@@ -284,7 +285,7 @@ def build_chart_html(df, ind, label, tf, overlay_actions=None):
     p=ind.get("price",0); chg=ind.get("change",0); cc="#00d084" if chg>=0 else "#ef4444"; cs2="+" if chg>=0 else ""
     ov=json.dumps(overlay_actions or [])
     return f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
-<script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}body{{background:#080c10;color:#d4e6f1;font-family:'Space Mono',monospace}}
 #hdr{{display:flex;align-items:center;gap:10px;padding:6px 12px;background:#0d1117;border-bottom:1px solid #1e2d3d;flex-wrap:wrap}}
@@ -295,7 +296,7 @@ def build_chart_html(df, ind, label, tf, overlay_actions=None):
 .tb{{background:#131b24;border:1px solid #1e2d3d;border-radius:3px;padding:1px 7px;font-size:0.58rem;color:#4a6278;cursor:pointer;font-family:'Space Mono',monospace;transition:all 0.12s}}
 .tb.g{{border-color:#00d084;color:#00d084;background:#0a1a10}}.tb.b{{border-color:#00aaff;color:#00aaff;background:#0a1220}}
 .tb.o{{border-color:#ff7b00;color:#ff7b00;background:#1a1000}}.tb.r{{border-color:#ef4444;color:#ef4444;background:#1a0808}}
-#cc{{width:100%;height:380px}}#rc{{width:100%;height:65px;border-top:1px solid #1e2d3d}}
+#cc{{width:100%;height:370px}}#rc{{width:100%;height:65px;border-top:1px solid #1e2d3d}}
 </style></head><body>
 <div id="hdr"><span class="sym">{label}</span><span class="tf">{tf}</span><span class="px">{p:,.8g}</span><span class="chg">{cs2}{chg}%</span>
 <span class="pill">RSI <b>{ind.get('rsi_cur',50)}</b></span><span class="pill">ADX <b>{ind.get('adx_cur',0)}</b></span>
@@ -391,7 +392,8 @@ OB Bull:{ind.get('ob_bull',[])} OB Bear:{ind.get('ob_bear',[])}
 BSL:{ind.get('swing_highs',[])} SSL:{ind.get('swing_lows',[])}
 Velas: {recent}
 JSON: {{"text":"## BIAS\\n## ESTRUCTURA\\n## NIVELES CLAVE\\n## SEÑAL\\n## PLAN","actions":[]}}"""
-        client=anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+        import httpx
+        client=anthropic.Anthropic(api_key=ANTHROPIC_KEY, http_client=httpx.Client())
         resp=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=1200,system=SYSTEM_PROMPT,messages=[{"role":"user","content":prompt}])
         raw=resp.content[0].text.strip()
         if raw.startswith("```"): parts=raw.split("```"); raw=parts[1]; raw=raw[4:] if raw.startswith("json") else raw
