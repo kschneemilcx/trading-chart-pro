@@ -15,7 +15,6 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 import json
-import os
 from datetime import datetime
 
 st.set_page_config(
@@ -108,21 +107,12 @@ li[role="option"]:hover{{background:{C['bg4']} !important;}}
 
 # ── API Key ──────────────────────────────────────────────────────────────────
 def load_api_key():
-    # En Railway/producción: leer desde variable de entorno
-    env_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    if env_key:
-        return env_key
-    # En local: leer desde archivo
     try:
         with open(KEY_FILE) as f: return f.read().strip()
     except: return ""
 
 def save_api_key(k):
-    # Solo guardar localmente si no hay variable de entorno
-    if not os.environ.get("ANTHROPIC_API_KEY", ""):
-        try:
-            with open(KEY_FILE,"w") as f: f.write(k)
-        except: pass
+    with open(KEY_FILE,"w") as f: f.write(k)
 
 # ── Fetch OHLCV ──────────────────────────────────────────────────────────────
 @st.cache_data(ttl=300, show_spinner=False)
