@@ -262,9 +262,8 @@ Fib H:{ind.get('fib_high',0)} L:{ind.get('fib_low',0)} Niveles:{ind.get('fib_lev
             msgs_ctx.append({"role":"user","content":context+"\n\nMensaje: "+m["content"]})
         else:
             msgs_ctx.append({"role":m["role"],"content":m["content"]})
-    import httpx
-    client=anthropic.Anthropic(api_key=ANTHROPIC_KEY, http_client=httpx.Client())
-    resp=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=2000,system=SYSTEM_PROMPT,messages=msgs_ctx)
+    client=anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    resp=client.messages.create(model="claude-3-haiku-20240307",max_tokens=2000,system=SYSTEM_PROMPT,messages=msgs_ctx)
     raw=resp.content[0].text.strip()
     try:
         if raw.startswith("```"):
@@ -392,9 +391,8 @@ OB Bull:{ind.get('ob_bull',[])} OB Bear:{ind.get('ob_bear',[])}
 BSL:{ind.get('swing_highs',[])} SSL:{ind.get('swing_lows',[])}
 Velas: {recent}
 JSON: {{"text":"## BIAS\\n## ESTRUCTURA\\n## NIVELES CLAVE\\n## SEÑAL\\n## PLAN","actions":[]}}"""
-        import httpx
-        client=anthropic.Anthropic(api_key=ANTHROPIC_KEY, http_client=httpx.Client())
-        resp=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=1200,system=SYSTEM_PROMPT,messages=[{"role":"user","content":prompt}])
+        client=anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+        resp=client.messages.create(model="claude-3-haiku-20240307",max_tokens=1200,system=SYSTEM_PROMPT,messages=[{"role":"user","content":prompt}])
         raw=resp.content[0].text.strip()
         if raw.startswith("```"): parts=raw.split("```"); raw=parts[1]; raw=raw[4:] if raw.startswith("json") else raw
         data=json.loads(raw); return data.get("text",""),data.get("actions",[])
